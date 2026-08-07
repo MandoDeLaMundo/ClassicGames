@@ -26,7 +26,7 @@ Every game added to this repository represents another opportunity to learn some
 
 | Game        | Status  |
 | ----------- | ------- |
-| Snake       | Planned |
+| Snake       | In Development |
 | Pac-Man     | Planned |
 | Dig Dug     | Planned |
 | Solitaire   | Planned |
@@ -177,7 +177,7 @@ Learning these workflows is part of the project's educational purpose.
 
 ## Roadmap
 
-* [ ] Initial project setup
+* [x] Initial project setup
 * [ ] Snake
 * [ ] Pong
 * [ ] Breakout
