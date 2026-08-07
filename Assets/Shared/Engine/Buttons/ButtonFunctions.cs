@@ -9,6 +9,11 @@ public class ButtonFunctions : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
+        if (GameManager.instance.isPaused)
+        {
+            GameManager.instance.UnpauseBeforeSwitchingScene();
+        }
+
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
 

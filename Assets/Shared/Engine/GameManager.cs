@@ -61,4 +61,10 @@ public class GameManager : MonoBehaviour
         menuActive.SetActive(false);
         menuActive = null;
     }
+
+    public void UnpauseBeforeSwitchingScene()
+    {
+        isPaused = false;
+        Time.timeScale = timeScaleOrig;
+    }
 }
