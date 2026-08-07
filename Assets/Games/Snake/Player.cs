@@ -1,6 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+enum Direction
+{
+    Up,
+    Down,
+    Left,
+    Right
+}
+
 public class Player : MonoBehaviour
 {
     [Header("Player Settings")]
@@ -12,10 +20,8 @@ public class Player : MonoBehaviour
     private void OnEnable() => moveActionReference.action.Enable();
     private void OnDisable() => moveActionReference.action.Disable();
 
-    private void Awake()
-    {
-        
-    }
+    private Direction currentDirection = Direction.Right;
+
 
     void Update()
     {
@@ -32,21 +38,25 @@ public class Player : MonoBehaviour
 
     void RotatePlayer(Vector2 moveInput)
     {
-        if (moveInput.x > 0)
+        if (moveInput.x > 0 && currentDirection != Direction.Left)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0);
+            currentDirection = Direction.Right;
         }
-        else if (moveInput.x < 0)
+        else if (moveInput.x < 0 && currentDirection != Direction.Right)
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
+            currentDirection = Direction.Left;
         }
-        else if (moveInput.y > 0)
+        else if (moveInput.y > 0 && currentDirection != Direction.Down)
         {
             transform.rotation = Quaternion.Euler(0, 0, 90);
+            currentDirection = Direction.Up;
         }
-        else if (moveInput.y < 0)
+        else if (moveInput.y < 0 && currentDirection != Direction.Up)
         {
             transform.rotation = Quaternion.Euler(0, 0, -90);
+            currentDirection = Direction.Down;
         }
     }
 }
