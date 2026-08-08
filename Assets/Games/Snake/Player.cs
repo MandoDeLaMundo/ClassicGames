@@ -1,18 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-enum Direction
-{
-    Up,
-    Down,
-    Left,
-    Right
-}
 
 public class Player : MonoBehaviour
 {
     [Header("Player Settings")]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float moveInterval;
 
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveActionReference;
@@ -20,43 +13,56 @@ public class Player : MonoBehaviour
     private void OnEnable() => moveActionReference.action.Enable();
     private void OnDisable() => moveActionReference.action.Disable();
 
-    private Direction currentDirection = Direction.Right;
+    private Vector2 rawInput;
+    private float moveTimer;
 
+    private Vector2Int direction = Vector2Int.right;
+    private Vector2Int gridPosition;
 
     void Update()
     {
         if (GameManager.instance.isPaused) return;
 
-        transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-        
-        if (moveActionReference.action.triggered)
+        rawInput = moveActionReference.action.ReadValue<Vector2>();
+
+        MovePlayer(rawInput);
+    }
+
+    void MovePlayer(Vector2 moveInput)
+    {
+        if (moveInput.x > 0 && direction != Vector2Int.left)
         {
-            Vector2 moveInput = moveActionReference.action.ReadValue<Vector2>();
-            RotatePlayer(moveInput);
+            direction = Vector2Int.right;
+        }
+        else if (moveInput.x < 0 && direction != Vector2Int.right)
+        {
+            direction = Vector2Int.left;
+        }
+        else if (moveInput.y > 0 && direction != Vector2Int.down)
+        {
+            direction = Vector2Int.up;
+        }
+        else if (moveInput.y < 0 && direction != Vector2Int.up)
+        {
+            direction = Vector2Int.down;
+        }
+
+        moveTimer += Time.deltaTime;
+
+        if (moveTimer >= moveInterval)
+        {
+            gridPosition += direction;
+            transform.position = new Vector3(gridPosition.x, gridPosition.y, 0);
+            moveTimer = 0f;
         }
     }
 
-    void RotatePlayer(Vector2 moveInput)
+    void OnCollisionEnter2D(Collision2D other)
     {
-        if (moveInput.x > 0 && currentDirection != Direction.Left)
+        if (other.gameObject.CompareTag("Border"))
         {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-            currentDirection = Direction.Right;
-        }
-        else if (moveInput.x < 0 && currentDirection != Direction.Right)
-        {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
-            currentDirection = Direction.Left;
-        }
-        else if (moveInput.y > 0 && currentDirection != Direction.Down)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, 90);
-            currentDirection = Direction.Up;
-        }
-        else if (moveInput.y < 0 && currentDirection != Direction.Up)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, -90);
-            currentDirection = Direction.Down;
+            GameManager.instance.PauseGame();
+            Debug.Log("Border hit!");
         }
     }
 }
